@@ -1,0 +1,54 @@
+.ui-multidatespicker, .ui-datepicker {
+    font-family: inherit;
+    background-color: #fff;
+    border: 1px solid #ddd;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    padding: 10px;
+    z-index: 1000;
+    border-radius: 4px;
+    position: relative;
+    overflow: hidden;
+}
+.gf-multi-date-field {
+    position: relative;
+}
+.gf-multi-date-field input {
+    padding-right: 30px;
+}
+.gf-multi-date-field .calendar-icon {
+    position: absolute;
+    top: 50%;
+    right: 10px;
+    transform: translateY(-50%);
+    cursor: pointer;
+    width: 16px;
+    height: 16px;
+    background: url('../images/calendar-icon.svg') no-repeat center;
+    background-size: 16px;
+}
+.ui-datepicker-close-btn {
+    position: absolute;
+    top: 8px;
+    right: 10px;
+    width: 20px;
+    height: 20px;
+    background-color: #f7f7f7;
+    color: #333;
+    border: 1px solid #ccc;
+    border-radius: 50%;
+    font-size: .8em;
+    cursor: pointer;
+    line-height: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 10;
+}
+.ui-datepicker-close-btn:hover {
+    background-color: #eee;
+}
+.ui-state-highlight {
+    background-color: #e5f4fb;
+    color: #333;
+    border-radius: 4px;
+}
