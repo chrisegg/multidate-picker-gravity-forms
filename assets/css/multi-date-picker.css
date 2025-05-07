@@ -12,8 +12,10 @@
 .gf-multi-date-field {
     position: relative;
 }
-.gf-multi-date-field input {
+.gf-multi-date-field input.gfield_date_multi {
     padding-right: 30px;
+    width: 100%;
+    box-sizing: border-box;
 }
 .gf-multi-date-field .calendar-icon {
     position: absolute;
