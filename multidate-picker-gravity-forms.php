@@ -2,8 +2,8 @@
 /*
 Plugin Name: Multi-Date Picker Field for Gravity Forms
 Plugin URI: https://gravityranger.com/gravity-forms-multi-date-picker/
-Description: Allows selection of multiple dates in a single Gravity Forms text field.
-Version: 1.2
+Description: Adds multi-date selection to Gravity Forms Date fields.
+Version: 1.3
 Author: Chris Eggleston
 Author URI: https://gravityranger.com
 License: GPL2
@@ -26,14 +26,15 @@ class Plugin {
     public function __construct() {
         $this->config = apply_filters('gf_multi_date_picker_config', [
             [
-                'form_id' => absint(1),
-                'field_id' => absint(6),
+                'form_id' => absint(1), // Your Gravity Forms form ID
+                'field_id' => absint(6), // Your Gravity Forms Date field ID
                 'date_format' => sanitize_text_field('mm/dd/yy'),
             ],
         ]);
 
         add_action('wp_enqueue_scripts', [$this, 'enqueue_assets']);
         add_filter('gform_field_validation', [$this, 'validate_field'], 10, 4);
+        add_filter('gform_field_content', [$this, 'modify_date_field_output'], 10, 5);
     }
 
     public function enqueue_assets() {
@@ -45,7 +46,7 @@ class Plugin {
             'gf-multi-date-picker',
             plugin_dir_url(__FILE__) . 'assets/css/multi-date-picker.css',
             [],
-            '1.1'
+            '1.2'
         );
 
         // Enqueue JavaScript
@@ -53,7 +54,7 @@ class Plugin {
             'gf-multi-date-picker',
             plugin_dir_url(__FILE__) . 'assets/js/multi-date-picker.js',
             ['jquery', 'jquery-ui-datepicker'],
-            '1.1',
+            '1.2',
             true
         );
 
@@ -65,9 +66,25 @@ class Plugin {
         );
     }
 
+    public function modify_date_field_output($content, $field, $value, $lead_id, $form_id) {
+        // Target Date fields in the config
+        foreach ($this->config as $config) {
+            if ($form_id == $config['form_id'] && $field->id == $config['field_id'] && $field->type === 'date') {
+                // Replace the default datepicker input with a custom one
+                $input_id = "input_{$form_id}_{$field->id}";
+                $content = preg_replace(
+                    '/<input[^>]+id=[\'"]' . $input_id . '[\'"][^>]*>/',
+                    '<div class="gf-multi-date-field"><input type="text" name="input_' . $field->id . '" id="' . $input_id . '" value="' . esc_attr($value) . '" class="datepicker gfield_date_multi" aria-describedby="datepicker-instructions" aria-label="Select multiple dates" /><span class="calendar-icon" role="button" aria-label="Open date picker"></span></div>',
+                    $content
+                );
+            }
+        }
+        return $content;
+    }
+
     public function validate_field($result, $value, $form, $field) {
         foreach ($this->config as $config) {
-            if ($form['id'] == $config['form_id'] && $field->id == $config['field_id']) {
+            if ($form['id'] == $config['form_id'] && $field->id == $config['field_id'] && $field->type === 'date') {
                 if ($field->isRequired && (empty($value) || !is_string($value))) {
                     $result['is_valid'] = false;
                     $result['message'] = __('Please select at least one date.', 'multidate-picker-gravity-forms');
